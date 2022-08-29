@@ -1,0 +1,20 @@
+apiVersion: v1
+name: lnd
+version: 0.1.0
+appVersion: 0.15.0-beta
+description: A golang implementation of a Lightning Network node
+keywords:
+  - lnd
+  - lightning
+  - cryptocurrency
+  - blockchain
+  - bitcoin
+home: https://github.com/lightningnetwork/lnd
+icon: https://github.com/lightningnetwork/lnd/raw/master/logo.png
+maintainers:
+    - name: Christian Hubmann
+      email: chrisrun@users.noreply.github.com
+      url: https://chrisrun.github.io/lnd-chart/
+sources:
+    - https://github.com/chrisrun/lnd-chart/
+engine: gotpl

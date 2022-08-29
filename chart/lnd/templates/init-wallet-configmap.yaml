@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-wallet-script
+  labels:
+    app: {{ template "lnd.name" . }}
+    chart: {{ template "lnd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  init-wallet.sh: |
+    set -e
+    WALLET_DIR=~/.lnd/data/chain/bitcoin/{{ .Values.bitcoin.network }}/
+    WALLET_PASSWORD_FILE=/root/.lnd/unlock.secret
+    if [[ ! -f ${WALLET_DIR}.initialized ]]; then
+      mkdir -p ${WALLET_DIR}
+      lndinit gen-seed > ${WALLET_DIR}seed.txt
+    fi
+
+    # Create the wallet database with the given seed and password files. If the wallet already exists, 
+    # we make sure we can actually unlock it with the given password file. This will take a few seconds in any case.
+    ret=0
+    lndinit -v --error-on-existing init-wallet \
+      --secret-source=file \
+      --file.seed=${WALLET_DIR}seed.txt \
+      --file.wallet-password=${WALLET_PASSWORD_FILE} \
+      --init-file.output-wallet-dir=$WALLET_DIR \
+      --init-file.validate-password || ret=$?
+
+    if [[ $ret -eq 0 ]]; then
+      touch ${WALLET_DIR}.initialized
+      echo "[INIT] Successfully initialized wallet."
+      echo "[INIT] The seed can be found at: ${WALLET_DIR}seed.txt and after storing it safely offline it can be deleted!"
+    elif [[ $ret -eq 128 ]]; then
+      touch ${WALLET_DIR}.initialized
+      echo "[INIT] Wallet already exists, skipping initialization."
+    else
+      echo "[INIT] Failed to initialize wallet!"
+      exit 1
+    fi
+
+    echo "[INIT] Asserting wallet password exists in secret ${WALLET_PASSWORD_FILE}"

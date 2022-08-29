@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "lnd.name" . }}
+  labels:
+    app: {{ template "lnd.name" . }}
+    chart: {{ template "lnd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+spec:
+  revisionHistoryLimit: {{ .Values.lnd.revisionHistoryLimit }}
+  replicas: {{ .Values.lnd.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ template "lnd.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "lnd.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      terminationGracePeriodSeconds: 3
+      initContainers:
+      - name: init-wallet
+        {{ if (( .Values.lndinit).digest) }}
+        image: "{{ .Values.lndinit.repository }}@{{ .Values.lndinit.digest }}"
+        {{ else }}
+        image: "{{ .Values.lndinit.repository }}:{{ .Values.lndinit.tag }}"
+        {{ end }}
+        command: ['/bin/bash']
+        args: ['/root/init-wallet.sh']
+        volumeMounts:
+          - name: init-wallet
+            mountPath: /root/init-wallet.sh
+            subPath: init-wallet.sh
+          - name: secrets
+            mountPath: /root/.lnd/unlock.secret
+            subPath: autoUnlockPassword
+          - name: data
+            mountPath: /root/.lnd/
+      containers:
+        - name: {{ template "lnd.fullname" . }}
+          {{ if ((.Values.image).digest) }}
+          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+          {{ else }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{ end }}
+          command: ["lnd"]
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1G
+            limits:
+              cpu: 250m
+              memory: 1G
+          env:
+            - name: CHECKSUM
+              value: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.internalServices.rpcPort }}
+            - name: rest
+              containerPort: {{ .Values.internalServices.restPort }}
+            - name: p2p
+              containerPort: {{ .Values.externalServices.p2pPort }}
+            - name: letsencrypt
+              containerPort: {{ .Values.externalServices.letsencryptPort }}
+            - name: watchtower
+              containerPort: {{ .Values.externalServices.watchtowerPort }}
+          volumeMounts:
+            - name: data
+              mountPath: /root/.lnd/
+            - name: configmap
+              mountPath: /root/.lnd/lnd.conf
+              subPath: lnd.conf
+            - name: secrets
+              mountPath: /root/.lnd/unlock.secret
+              subPath: autoUnlockPassword
+          lifecycle:
+            preStop:
+              exec:
+                # Make sure we safely quit lnd so we don't corrupt anything
+                command: ["/bin/lncli", "-n", "{{ .Values.network }}", "stop"]
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ template "lnd.name" . }}
+        - name: configmap
+          configMap:
+            name: {{ template "lnd.name" . }}
+        - name: init-wallet
+          configMap:
+            name: init-wallet-script
+            defaultMode: 0777
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ template "lnd.name" . }}
