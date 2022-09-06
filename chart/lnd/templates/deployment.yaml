@@ -25,6 +25,10 @@ spec:
         app: {{ template "lnd.name" . }}
         release: {{ .Release.Name }}
     spec:
+      #securityContext:
+      #  runAsUser: 1000
+      #  runAsGroup: 1000
+      #  fsGroup: 1000
       terminationGracePeriodSeconds: 3
       initContainers:
       - name: init-wallet
@@ -63,17 +67,27 @@ spec:
           env:
             - name: CHECKSUM
               value: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+            - name: RPC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: rpcpassword
+                  name: {{ template "lnd.name" . }}
+            - name: RPC_USER
+              valueFrom:
+                secretKeyRef:
+                  key: rpcuser
+                  name: {{ template "lnd.name" . }}
           ports:
             - name: rpc
-              containerPort: {{ .Values.internalServices.rpcPort }}
+              containerPort: 10009
             - name: rest
-              containerPort: {{ .Values.internalServices.restPort }}
+              containerPort: 8080
             - name: p2p
-              containerPort: {{ .Values.externalServices.p2pPort }}
+              containerPort: 9735
             - name: letsencrypt
-              containerPort: {{ .Values.externalServices.letsencryptPort }}
+              containerPort: 8088
             - name: watchtower
-              containerPort: {{ .Values.externalServices.watchtowerPort }}
+              containerPort: 9911              
           volumeMounts:
             - name: data
               mountPath: /root/.lnd/
@@ -83,6 +97,11 @@ spec:
             - name: secrets
               mountPath: /root/.lnd/unlock.secret
               subPath: autoUnlockPassword
+          {{ if eq .Values.bitcoin.node "bitcoind" }}
+            - name: configmap
+              mountPath: /root/.lnd/lnd.conf
+              subPath: lnd.conf
+          {{ end }}
           lifecycle:
             preStop:
               exec:
@@ -99,6 +118,11 @@ spec:
           configMap:
             name: init-wallet-script
             defaultMode: 0777
+        {{ if eq .Values.bitcoin.node "bitcoind" }}
+        - name: bitcoind-config
+          configMap:
+            name: bitcoind-config
+        {{ end }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ template "lnd.name" . }}

@@ -114,7 +114,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 | Name                      | Description                                     | Value |
 | ------------------------- | ----------------------------------------------- | ----- |
-| `bitcoin.neutrino.connect` | Connect only to the specified peers at startup. This creates a persistent connection to a target peer. This is recommended as there aren't many neutrino compliant full nodes on the test network yet. | `faucet.lightning.community` | 
+| `bitcoin.neutrino.connect` | Connect only to the specified peers at startup. This creates a persistent connection to a target peer. This is recommended as there aren't many neutrino compliant full nodes on the test network yet. | `34.123.123.123` | 
 | `bitcoin.neutrino.maxpeers` | Max number of inbound and outbound peers. | `10` |
 | `bitcoin.neutrino.peers` | Add a peer to connect with at startup. | `[faucet.lightning.community]` |
 | `bitcoin.neutrino.banduration` | How long to ban misbehaving peers. Valid time units are {s, m, h}. Minimum 1 second. | `60m` | 
