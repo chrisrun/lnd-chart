@@ -3,21 +3,21 @@
 # LND Helm Charts
 
 The Lightning Network Daemon (`lnd`) - is a complete implementation of a
-[Lightning Network](https//lightning.network) node.  `lnd` has several pluggable back-end
-chain services including [`btcd`](https//github.com/btcsuite/btcd) (a
-full-node), [`bitcoind`](https//github.com/bitcoin/bitcoin), and
-[`neutrino`](https//github.com/lightninglabs/neutrino) (a new experimental light client). The project's codebase uses the
-[btcsuite](https//github.com/btcsuite/) set of Bitcoin libraries, and also
+[Lightning Network](https://lightning.network) node.  `lnd` has several pluggable back-end
+chain services including [`btcd`](https://github.com/btcsuite/btcd) (a
+full-node), [`bitcoind`](https://github.com/bitcoin/bitcoin), and
+[`neutrino`](https://github.com/lightninglabs/neutrino) (a new experimental light client). The project's codebase uses the
+[btcsuite](https://github.com/btcsuite/) set of Bitcoin libraries, and also
 exports a large set of isolated re-usable Lightning Network related libraries
 within it.
 
-[Overview of LND](https//github.com/lightningnetwork/lnd/)
+[Overview of LND](https://github.com/lightningnetwork/lnd/)
 
                            
 ## TL;DR
 
 ```console
-  helm repo add lnd https` |//chrisrun.github.io/lnd-chart/
+  helm repo add lnd https://chrisrun.github.io/lnd-chart/
   helm install lnd lnd/lnd -n lnd --create-namespace
 ```
 
@@ -25,7 +25,7 @@ This will setup a wallet and store the seed.txt in the pod. The seed.txt file ca
 
 ## Introduction
 
-This chart bootstraps a [LND](https//github.com/lightningnetwork/lnd/) deployment on a [Kubernetes](https//kubernetes.io) cluster using the [Helm](https//helm.sh) package manager.
+This chart bootstraps a [LND](https://github.com/lightningnetwork/lnd/) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https//helm.sh) package manager.
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ This chart bootstraps a [LND](https//github.com/lightningnetwork/lnd/) deploymen
 To install the chart with the release name `lnd`
 
 ```bash
-$  helm repo add lnd https` |//chrisrun.github.io/lnd-chart/
+$  helm repo add lnd https://chrisrun.github.io/lnd-chart/
 $  helm install lnd lnd/lnd -n lnd --create-namespace
 ```
 
