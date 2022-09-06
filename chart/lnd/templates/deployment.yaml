@@ -87,7 +87,7 @@ spec:
             - name: letsencrypt
               containerPort: 8088
             - name: watchtower
-              containerPort: 9911              
+              containerPort: 9911
           volumeMounts:
             - name: data
               mountPath: /root/.lnd/
