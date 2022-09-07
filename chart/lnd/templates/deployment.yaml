@@ -67,12 +67,12 @@ spec:
           env:
             - name: CHECKSUM
               value: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-            - name: RPC_PASSWORD
+            - name: RPCPASS
               valueFrom:
                 secretKeyRef:
                   key: rpcpassword
                   name: {{ template "lnd.name" . }}
-            - name: RPC_USER
+            - name: RPCUSER
               valueFrom:
                 secretKeyRef:
                   key: rpcuser
@@ -97,11 +97,6 @@ spec:
             - name: secrets
               mountPath: /root/.lnd/unlock.secret
               subPath: autoUnlockPassword
-          {{ if eq .Values.bitcoin.node "bitcoind" }}
-            - name: configmap
-              mountPath: /root/.lnd/lnd.conf
-              subPath: lnd.conf
-          {{ end }}
           lifecycle:
             preStop:
               exec:
@@ -118,11 +113,6 @@ spec:
           configMap:
             name: init-wallet-script
             defaultMode: 0777
-        {{ if eq .Values.bitcoin.node "bitcoind" }}
-        - name: bitcoind-config
-          configMap:
-            name: bitcoind-config
-        {{ end }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ template "lnd.name" . }}

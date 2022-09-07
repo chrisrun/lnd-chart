@@ -585,12 +585,18 @@ data:
     ; Username for RPC connections to bitcoind. By default, lnd will attempt to
     ; automatically obtain the credentials, so this likely won't need to be set
     ; (other than for a remote bitcoind instance).
-    bitcoind.rpcuser=$RPC_USER
+    ; bitcoind.rpcuser=$RPCUSER
 
     ; Password for RPC connections to bitcoind. By default, lnd will attempt to
     ; automatically obtain the credentials, so this likely won't need to be set
     ; (other than for a remote bitcoind instance).
-    bitcoind.rpcpass=$RPC_PASSWORD
+    ; bitcoind.rpcpass=$RPCPASS
+
+    {{ if eq .Values.bitcoin.node "bitcoind" }}
+    bitcoind.rpcuser={{ index (lookup "v1" "Secret" .Values.bitcoin.bitcoind.namespace "bitcoind").data "rpcuser" | b64dec}}
+    bitcoind.rpcpass={{ index (lookup "v1" "Secret" .Values.bitcoin.bitcoind.namespace "bitcoind").data "rpcpassword" | b64dec}}
+    {{ end }}
+
 
     ; ZMQ socket which sends rawblock and rawtx notifications from bitcoind. By
     ; default, lnd will attempt to automatically obtain this information, so this
