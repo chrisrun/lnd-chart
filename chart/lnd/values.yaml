@@ -4,8 +4,8 @@
 
 image:
   repository: lightninglabs/lnd #the image repository to be used
-  tag: v0.14.3-beta #the image version
-  digest: sha256:f6a3bf4c98c99ed4d29e33343ac5197afc1fab6b50148ec4c34f3abc22f4ec35 #the image digest
+  tag: v0.15.2-beta #the image version
+  digest: sha256:51814ae7f002bf73b760d1dffab3645dfe83b41b0e8eb72000b096ea989e4504
   pullPolicy: IfNotPresent #pull policy
 
 lndinit:
