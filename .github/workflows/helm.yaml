@@ -23,14 +23,8 @@ jobs:
         with:
           version: v3.5.0
 
-      - uses: redhat-cop/github-actions/set-helm-version@master
-        name: Set Chart Version
-        with:
-          path: chart/lnd
-          app_version: ${GITHUB_REF##*/}
-
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.1
+        uses: helm/chart-releaser-action@v1.4.1
         with:
           charts_dir: chart
         env:

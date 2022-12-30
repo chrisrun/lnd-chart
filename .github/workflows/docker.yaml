@@ -41,8 +41,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-        env:
-          checkout: ${GITHUB_REF##*/}
+          build-args: |
+            checkout=${GITHUB_REF##*/}
 
       - name: Sign image with a key
         run: |
