@@ -39,10 +39,10 @@ jobs:
         with:
           context: ./docker
           push: true
-          tags: ${{ env.GITHUB_REF_NAME }}
+          tags: ${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            checkout=${{ env.GITHUB_REF_NAME }}
+            checkout=${{ github.ref_name }}
 
       - name: Sign image with a key
         run: |
