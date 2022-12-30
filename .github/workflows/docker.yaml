@@ -39,15 +39,15 @@ jobs:
         with:
           context: ./docker
           push: true
-          tags: ${GITHUB_REF##*/}
+          tags: ${{GITHUB_REF_NAME}}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            checkout=${GITHUB_REF##*/}
+            checkout=${GITHUB_REF_NAME}
 
       - name: Sign image with a key
         run: |
           cosign sign --key env://COSIGN_PRIVATE_KEY ${TAGS}
         env:
-          TAGS: ${GITHUB_REF##*/}
+          TAGS: ${GITHUB_REF_NAME}
           COSIGN_PRIVATE_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
