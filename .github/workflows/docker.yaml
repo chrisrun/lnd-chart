@@ -29,7 +29,7 @@ jobs:
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: chr1st1anh/lnd
           tags: type=sha,format=long
@@ -48,6 +48,6 @@ jobs:
         run: |
           cosign sign --key env://COSIGN_PRIVATE_KEY ${TAGS}
         env:
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_PRIVATE_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
