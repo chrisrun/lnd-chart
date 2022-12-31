@@ -593,8 +593,10 @@ data:
     ; bitcoind.rpcpass=$RPCPASS
 
     {{ if eq .Values.bitcoin.node "bitcoind" }}
+    {{- if (lookup "v1" "Secret" .Values.bitcoin.bitcoind.namespace "bitcoind") }}
     bitcoind.rpcuser={{ index (lookup "v1" "Secret" .Values.bitcoin.bitcoind.namespace "bitcoind").data "rpcuser" | b64dec}}
     bitcoind.rpcpass={{ index (lookup "v1" "Secret" .Values.bitcoin.bitcoind.namespace "bitcoind").data "rpcpassword" | b64dec}}
+    {{- end }}
     {{ end }}
 
 
