@@ -23,6 +23,20 @@ jobs:
         with:
           version: v3.5.0
 
+      - name: Run Datree Policy Check
+        uses: datreeio/action-datree@main
+        with:
+          path: 'chart/lnd'
+          cliArguments: '-o sarif'
+          isHelmChart: true
+          helmArguments: '--values values.yaml'
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: datree.sarif
+          wait-for-processing: true
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.1
         with:
