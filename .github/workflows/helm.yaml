@@ -30,7 +30,7 @@ jobs:
         uses: datreeio/action-datree@main
         with:
           path: 'chart/lnd'
-          cliArguments: '-o sarif --policy-config chart/policy.yaml'
+          cliArguments: '--policy-config chart/policy.yaml'
           isHelmChart: true
           helmArguments: '--values chart/lnd/values.yaml'
 
