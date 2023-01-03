@@ -37,7 +37,7 @@ jobs:
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: datree.sarif
+          sarif_file: chart/lnd/datree.sarif
           wait-for-processing: true
 
       - name: Run chart-releaser
