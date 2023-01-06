@@ -32,7 +32,7 @@ internalServices:
 # Ports that are visible outside your cluster
 externalServices:
   p2pPort: 9735 #
-  externalIp: lnd1-tejon #
+  externalIp: lnd #
   letsencryptPort: 8088 #
   watchtowerPort: 9911 #
 

@@ -5,15 +5,17 @@ on:
     branches:
       - 'master'
 
-env:
-  DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }} 
-
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2.0.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
         with:
           fetch-depth: 0
 
@@ -22,26 +24,22 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@18bc76811624f360dbd7f18c2d4ecb32c7b87bab # v1.1
         with:
           version: v3.5.0
 
       - name: Run Datree Policy Check
-        uses: datreeio/action-datree@main
+        uses: datreeio/action-datree@de67ae7a5133d719dc794e1b75682cd4c5f94d8a # main
         with:
           path: 'chart/lnd'
           cliArguments: '--policy-config chart/policy.yaml'
           isHelmChart: true
           helmArguments: '--values chart/lnd/values.yaml'
-
-      #- name: Upload analysis results to GitHub
-      #  uses: github/codeql-action/upload-sarif@v2
-      #  with:
-      #    sarif_file: chart/lnd/datree.sarif
-      #    wait-for-processing: true
+        env:
+          DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }} 
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.1
+        uses: helm/chart-releaser-action@98bccfd32b0f76149d188912ac8e45ddd3f8695f # v1.4.1
         with:
           charts_dir: chart
         env:
