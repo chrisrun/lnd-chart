@@ -4,14 +4,12 @@
 
 image:
   repository: lightninglabs/lnd #the image repository to be used
-  tag: v0.15.2-beta #the image version
-  digest: sha256:51814ae7f002bf73b760d1dffab3645dfe83b41b0e8eb72000b096ea989e4504
+  tag: v0.15.5-beta #the image version
   pullPolicy: IfNotPresent #pull policy
 
 lndinit:
   repository: lightninglabs/lndinit
-  tag: v0.1.3-beta-lnd-v0.14.3-beta
-  digest:
+  tag: v0.1.8-beta-lnd-v0.15.5-beta
 
 lnd:
   alias: MyLightning #The alias your node will use, which can be up to 32 UTF-8 characters in length.
@@ -21,8 +19,12 @@ lnd:
   replicas: 1 #How many replicas of lnd do you want to run
 
 persistence:
-  size: 15G #The main disk size of the lnd pod
+  size: 10G #The main disk size of the lnd pod
   storageClass: gp2 #The storage class used for the disk
+  existingDisk:
+    handle: lnd-2
+    fsType: ext4
+    driver: pd.csi.storage.gke.io  
 
 # Ports that are exposed to other pods in your cluster
 internalServices:

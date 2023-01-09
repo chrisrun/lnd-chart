@@ -1,0 +1,25 @@
+{{ if (.Values.persistence.existingDisk.handle) }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ .Release.Namespace }}-lnd"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app: {{ template "lnd.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  storageClassName: {{ template "lnd.fullname" . }}
+  capacity:
+    storage: {{ .Values.persistence.size | quote }}
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    namespace: "{{ .Release.Namespace }}"
+    name: {{ template "lnd.name" . }}
+  csi:
+    driver: {{ .Values.persistence.existingDisk.driver }}
+    volumeHandle: {{ .Values.persistence.existingDisk.handle }}
+    fsType: {{ .Values.persistence.existingDisk.fsType }}
+{{ end }}
